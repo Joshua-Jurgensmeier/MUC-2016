@@ -1,0 +1,6 @@
+1) Write a parking function
+2) Label the stop lines and lots on the large map
+3) Add the large map to the program
+4) Recalibrate the robot to the large map
+5) Add more documentation
+6) Incorporate right of way, parking, and roadblock recalibration into main
