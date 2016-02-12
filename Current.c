@@ -7,48 +7,49 @@
 // Structs
 struct vector
 {
-	ubyte left_path;
-	ubyte straight_path;
-	ubyte right_path;
+	ubyte leftPath;
+	ubyte straightPath;
+	ubyte rightPath;
 };
 
 struct edge
 {
 	ubyte destination;
 	ubyte distance;
-	ubyte parking_lot;
-	ubyte start_lot;
+	ubyte parkingLot;
+	ubyte startLot;
 };
 
 // Variable initializations
-const ubyte MAX_UBYTE = 255;	// Represents infinity
+const ubyte INFINITY = 255;		// Represents infinity
 
-const ubyte v_size = 16;			// Number of vectors
-vector vertices[v_size];			// Array of vectors (1 based, 0 is used as undefined)
-const ubyte p_size = 100;			// Number of Paths
-edge paths[p_size];						// Array of paths (1 based, 0 is used as undefined)
-ubyte path_counter = 1;				// Counter to keep track of which paths can be assigned to a vector
+const ubyte vSize = 16;				// Number of vectors
+vector vertices[vSize];			// Array of vectors (1 based, 0 is used as undefined)
+
+const ubyte pSize = 100;			// Number of Paths
+ubyte pathCounter = 1;				// Counter to keep track of which paths can be assigned to a vector
+edge paths[pSize];						// Array of paths (1 based, 0 is used as undefined)
 
 char directions[100][3];			// Array to keep track of the directions to get from source to destination
 ubyte locations[5]; 					// Home -> Park1 -> Park2 -> Park3 -> Home
-ubyte locations_paths[5];			// Path number that objective is on (unique for permutation function)
-ubyte permutations[6][3];			// Permutations of locations_paths
-ubyte permutations_l[6][3];		// Permutations of locations
-ubyte current_location = 0;		// 0-4 Which objectives have been reached
+ubyte locationPaths[5];			// Path number that objective is on (unique for permutation function)
+ubyte permutationPaths[6][3];			// Permutations of locations_paths
+ubyte permutationLocations[6][3];		// Permutations of locations
+ubyte currentLocation = 0;		// 0-4 Which objectives have been reached
 bool visited[5];
 
 // Creates a path and assigns the corresponding vector to it
-void add_path(ubyte source, ubyte destination, char direction, ubyte distance, ubyte parking_lot, ubyte start_lot)
+void AddPath(ubyte source, ubyte destination, char direction, ubyte distance, ubyte parkingLot, ubyte startLot)
 {
 	// Assign the L,S,R direction on the vector to the new path
 	if (direction == 'L')
 	{
-		vertices[source].left_path = path_counter;
+		vertices[source].leftPath = pathCounter;
 	}
 
 	else if (direction == 'S')
 	{
-		vertices[source].straight_path = path_counter;
+		vertices[source].straightPath = pathCounter;
 	}
 
 	else if (direction == 'R')
@@ -57,80 +58,80 @@ void add_path(ubyte source, ubyte destination, char direction, ubyte distance, u
 	}
 
 	// Assign the information given to the path
-	paths[path_counter].destination = destination;
-	paths[path_counter].distance = distance;
+	paths[pathCounter].destination = destination;
+	paths[pathCounter].distance = distance;
 
-	if (parking_lot >= 0)
+	if (parkingLot >= 0)
 	{
-		paths[path_counter].parking_lot = parking_lot;
+		paths[pathCounter].parkingLot = parkingLot;
 	}
 
-	if (start_lot >= 0)
+	if (startLot >= 0)
 	{
-		paths[path_counter].start_lot = start_lot;
+		paths[pathCounter].startLot = startLot;
 	}
 
 	// Increase the path_counter to a new unused path
-	path_counter++;
+	pathCounter++;
 }
 
 // Removes a path from the graph
-void remove_path(ubyte source, ubyte destination)
+void removePath(ubyte source, ubyte destination)
 {
-	if (paths[vertices[source].left_path].destination == destination)
+	if (paths[vertices[source].leftPath].destination == destination)
 	{
-		vertices[source].left_path = 0;
+		vertices[source].leftPath = 0;
 	}
 
-	else if (paths[vertices[source].straight_path].destination == destination)
+	else if (paths[vertices[source].straightPath].destination == destination)
 	{
-		vertices[source].left_path = 0;
+		vertices[source].leftPath = 0;
 	}
 
-	else if (paths[vertices[source].right_path].destination == destination)
+	else if (paths[vertices[source].rightPpath].destination == destination)
 	{
-		vertices[source].left_path = 0;
+		vertices[source].leftPath = 0;
 	}
 }
 
 // Initalizes the graph with all the information needed
-void graph_init() {
-	add_path(1,3,'L',10,0,0);
-	add_path(2,3,'L',5,0,0);
-	add_path(3,7,'L',7,0,0);
-	add_path(4,1,'L',7,0,1);
-	add_path(5,2,'S',7,2,0);
-	add_path(5,4,'R',5,0,0);
-	add_path(6,2,'L',7,2,0);
-	add_path(6,4,'S',5,0,0);
-	add_path(7,6,'L',5,0,0);
-	add_path(7,13,'S',15,4,0);
-	add_path(8,9,'S',5,0,0);
-	add_path(8,5,'R',8,0,0);
-	add_path(9,13,'L',7,0,0);
-	add_path(10,8,'L',5,0,0);
-	add_path(10,15,'S',8,3,0);
-	add_path(11,13,'L',4,0,0);
-	add_path(12,11,'L',10,0,0);
-	add_path(12,10,'S',3,0,0);
-	add_path(13,14,'L',10,5,0);
-	add_path(14,12,'L',4,0,0);
-	add_path(15,1,'S',7,0,1);
+void createMap() {
+	addPath(1,3,'L',10,0,0);
+	addPath(2,3,'L',5,0,0);
+	addPath(3,7,'L',7,0,0);
+	addPath(4,1,'L',7,0,1);
+	addPath(5,2,'S',7,2,0);
+	addPath(5,4,'R',5,0,0);
+	addPath(6,2,'L',7,2,0);
+	addPath(6,4,'S',5,0,0);
+	addPath(7,6,'L',5,0,0);
+	addPath(7,13,'S',15,4,0);
+	addPath(8,9,'S',5,0,0);
+	addPath(8,5,'R',8,0,0);
+	addPath(9,13,'L',7,0,0);
+	addPath(10,8,'L',5,0,0);
+	addPath(10,15,'S',8,3,0);
+	addPath(11,13,'L',4,0,0);
+	addPath(12,11,'L',10,0,0);
+	addPath(12,10,'S',3,0,0);
+	addPath(13,14,'L',10,5,0);
+	addPath(14,12,'L',4,0,0);
+	addPath(15,1,'S',7,0,1);
 }
 
 
 ubyte dijkstra(ubyte source, ubyte destination)
 {
-	ubyte dist[v_size];			// Holds the distance to vertices
-	ubyte prev[v_size];			// Holds the vertex from whence it came
-	char dir[v_size];			// Holds the direction from whence it came
-	bool visited[v_size];	// Array of vertices to still visit
+	ubyte dist[vSize];			// Holds the distance to vertices
+	ubyte prev[vSize];			// Holds the vertex from whence it came
+	char dir[vSize];				// Holds the direction from whence it came
+	bool visited[vSize];		// Array of vertices to still visit
 	ubyte c;								// Current vertex that is being searched
 
 	// Array initialization
-	for (ubyte v = 1; v < v_size; v++)
+	for (ubyte v = 1; v < vSize; v++)
 	{
-		dist[v] = MAX_UBYTE;             		// Initialize to "infinity"
+		dist[v] = INFINITY;             		// Initialize to "infinity"
 		prev[v] = 0;            					// Initialize to "undefined"
 		dir[v] = 0;
 		visited[v] = false;								// Initialize to not visited yet
@@ -140,12 +141,12 @@ ubyte dijkstra(ubyte source, ubyte destination)
 	dist[source] = 0;
 
 	// Loop through all vertices
-	for (ubyte x = 1; x < v_size; x++)
+	for (ubyte x = 1; x < vSize; x++)
 	{
 
 		// Find vertex with the shortest distance that we haven't visited yet
-		ubyte min = MAX_UBYTE;													// Keeps track of the current shortest distance
-		for (ubyte i = 1; i < v_size; i++)							// Check all vertices
+		ubyte min = INFINITY;													// Keeps track of the current shortest distance
+		for (ubyte i = 1; i < vSize; i++)							// Check all vertices
 		{
 			if (visited[i] == false && dist[i] <= min)		// Only update if we haven't visited the vertex yet and it's shorter than our current vertex
 			{
@@ -166,11 +167,11 @@ ubyte dijkstra(ubyte source, ubyte destination)
 		// It checks to see if there are any paths connected to the current vertex,
 		// then it checks if taking the new path would be any shorter than the current path to the vertex.
 		// If it is shorter then it updates the dist and prev array to the new values.
-		if (vertices[c].left_path != 0)
+		if (vertices[c].leftPath != 0)
 		{
-			ubyte path_to_neighbor = vertices[c].left_path;
-			ubyte neighbor = paths[path_to_neighbor].destination;
-			ubyte alt = dist[c] + paths[path_to_neighbor].distance;
+			ubyte pathToNeighbor = vertices[c].leftPath;
+			ubyte neighbor = paths[pathToNeighbor].destination;
+			ubyte alt = dist[c] + paths[pathToNeighbor].distance;
 
 			if (alt < dist[neighbor])
 			{
@@ -179,11 +180,11 @@ ubyte dijkstra(ubyte source, ubyte destination)
 				dir[neighbor] = 'L';
 			}
 		}
-		if (vertices[c].straight_path != 0)
+		if (vertices[c].straightPath != 0)
 		{
-			ubyte path_to_neighbor = vertices[c].straight_path;
-			ubyte neighbor = paths[path_to_neighbor].destination;
-			ubyte alt = dist[c] + paths[path_to_neighbor].distance;
+			ubyte pathToNeighbor = vertices[c].straightPath;
+			ubyte neighbor = paths[pathToNeighbor].destination;
+			ubyte alt = dist[c] + paths[pathToNeighbor].distance;
 
 			if (alt < dist[neighbor])
 			{
@@ -194,9 +195,9 @@ ubyte dijkstra(ubyte source, ubyte destination)
 		}
 		if (vertices[c].right_path != 0)
 		{
-			ubyte path_to_neighbor = vertices[c].right_path;
-			ubyte neighbor = paths[path_to_neighbor].destination;
-			ubyte alt = dist[c] + paths[path_to_neighbor].distance;
+			ubyte pathToNeighbor = vertices[c].rightPath;
+			ubyte neighbor = paths[pathToNeighbor].destination;
+			ubyte alt = dist[c] + paths[pathToNeighbor].distance;
 
 			if (alt < dist[neighbor])
 			{
@@ -209,6 +210,8 @@ ubyte dijkstra(ubyte source, ubyte destination)
 
 
 	// Figure out directions to get from destination to source from prev[]
+
+	// Clear directions array
 	for (int i = 0; i < 100; i++)
 	{
 		directions[i][0] = 0;
@@ -250,107 +253,107 @@ ubyte dijkstra(ubyte source, ubyte destination)
   return dist[destination];
 }
 
-void shortest_path()
+void shortestPath()
 {
 
 	// Reset locations_paths
-	locations_paths[0] = 0;
-	locations_paths[1] = 0;
-	locations_paths[2] = 0;
-	locations_paths[3] = 0;
-	locations_paths[4] = 0;
+	locationPaths[0] = 0;
+	locationPaths[1] = 0;
+	locationPaths[2] = 0;
+	locationPaths[3] = 0;
+	locationPaths[4] = 0;
 
 	// Find the paths that contain the parking or starting lot
 	// we are looking for and store that in locations_paths
-	for (ubyte i = 0; i < p_size; i++)
+	for (ubyte i = 0; i < pSize; i++)
 	{
-		if (locations[0] == paths[i].start_lot)
+		if (locations[0] == paths[i].startLot)
 		{
-			locations_paths[0] = i;
+			locationPaths[0] = i;
 		}
 
-		if (locations[1] == paths[i].parking_lot)
+		if (locations[1] == paths[i].parkingLot)
 		{
-			locations_paths[1] = i;
+			locationPaths[1] = i;
 		}
 
-		if (locations[2] == paths[i].parking_lot)
+		if (locations[2] == paths[i].parkingLot)
 		{
-			locations_paths[2] = i;
+			locationPaths[2] = i;
 		}
 
-		if (locations[3] == paths[i].parking_lot)
+		if (locations[3] == paths[i].parkingLot)
 		{
-			locations_paths[3] = i;
+			locationPaths[3] = i;
 		}
 
-		if (locations[4] == paths[i].start_lot)
+		if (locations[4] == paths[i].startLot)
 		{
-			locations_paths[4] = i;
+			locationPaths[4] = i;
 		}
 	}
 
 	// Don't consider locations that we already visited
-	for (int i = 0; i<5; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		if (visited[i])
 		{
-			locations_paths[i] = 0;
+			locationPaths[i] = 0;
 		}
 	}
 
 	// Put all the possible permutations in the permutations array
-	permutations[0][0] = locations_paths[1];
-	permutations_l[0][0] = locations[1];
-	permutations[0][1] = locations_paths[2];
-	permutations_l[0][1] = locations[2];
-	permutations[0][2] = locations_paths[3];
-	permutations_l[0][2] = locations[3];
+	permutationPaths[0][0] = locationPaths[1];
+	permutationLocations[0][0] = locations[1];
+	permutationPaths[0][1] = locationPaths[2];
+	permutationLocations[0][1] = locations[2];
+	permutationPaths[0][2] = locationPaths[3];
+	permutationLocations[0][2] = locations[3];
 
-	permutations[1][0] = locations_paths[1];
-	permutations_l[1][0] = locations[1];
-	permutations[1][1] = locations_paths[3];
-	permutations_l[1][1] = locations[3];
-	permutations[1][2] = locations_paths[2];
-	permutations_l[1][2] = locations[2];
+	permutationPaths[1][0] = locationPaths[1];
+	permutationLocations[1][0] = locations[1];
+	permutationPaths[1][1] = locationPaths[3];
+	permutationLocations[1][1] = locations[3];
+	permutationPaths[1][2] = locationPaths[2];
+	permutationLocations[1][2] = locations[2];
 
-	permutations[2][0] = locations_paths[2];
-	permutations_l[2][0] = locations[2];
-	permutations[2][1] = locations_paths[1];
-	permutations_l[2][1] = locations[1];
-	permutations[2][2] = locations_paths[3];
-	permutations_l[2][2] = locations[3];
+	permutationPaths[2][0] = locations_paths[2];
+	permutationLocations[2][0] = locations[2];
+	permutationPaths[2][1] = locations_paths[1];
+	permutationLocations[2][1] = locations[1];
+	permutationPaths[2][2] = locations_paths[3];
+	permutationLocations[2][2] = locations[3];
 
-	permutations[3][0] = locations_paths[2];
-	permutations_l[3][0] = locations[2];
-	permutations[3][1] = locations_paths[3];
-	permutations_l[3][1] = locations[3];
-	permutations[3][2] = locations_paths[1];
-	permutations_l[3][2] = locations[1];
+	permutationPaths[3][0] = locations_paths[2];
+	permutationLocations[3][0] = locations[2];
+	permutationPaths[3][1] = locations_paths[3];
+	permutationLocations[3][1] = locations[3];
+	permutationPaths[3][2] = locations_paths[1];
+	permutationLocations[3][2] = locations[1];
 
-	permutations[4][0] = locations_paths[3];
-	permutations_l[4][0] = locations[3];
-	permutations[4][1] = locations_paths[2];
-	permutations_l[4][1] = locations[2];
-	permutations[4][2] = locations_paths[1];
-	permutations_l[4][2] = locations[1];
+	permutationPaths[4][0] = locations_paths[3];
+	permutationLocations[4][0] = locations[3];
+	permutationPaths[4][1] = locations_paths[2];
+	permutationLocations[4][1] = locations[2];
+	permutationPaths[4][2] = locations_paths[1];
+	permutationLocations[4][2] = locations[1];
 
-	permutations[5][0] = locations_paths[3];
-	permutations_l[5][0] = locations[3];
-	permutations[5][1] = locations_paths[1];
-	permutations_l[5][1] = locations[1];
-	permutations[5][2] = locations_paths[2];
-	permutations_l[5][2] = locations[2];
+	permutationPaths[5][0] = locations_paths[3];
+	permutationLocations[5][0] = locations[3];
+	permutationPaths[5][1] = locations_paths[1];
+	permutationLocations[5][1] = locations[1];
+	permutationPaths[5][2] = locations_paths[2];
+	permutationLocations[5][2] = locations[2];
 
 	// Move all the 0s to the end of the array
 	for (ubyte i = 0; i < 6; i++)
 	{
-		for (int z = 0; z < 2; z++)
+		for (ubyte z = 0; z < 2; z++)
 		{
-			if (permutations[i][z] == 0)
+			if (permutationPaths[i][z] == 0)
 			{
-				permutations[i][z] = permutations[i][z+1];
-				permutations[i][z+1] = 0;
+				permutationPaths[i][z] = permutationPaths[i][z+1];
+				permutationPaths[i][z+1] = 0;
 			}
 		}
 	}
@@ -362,45 +365,48 @@ void shortest_path()
 	// Initialize it
 	for (ubyte i = 0; i < 6; i++)
 	{
-		total_dists[i] = 0;
+		totalDists[i] = 0;
 	}
 
 	// Loop through each permutation of the route and calculate the total distance of each
-	for (ubyte i = 0; i < 6 && permutations[i][0] != 0; i++)
+	for (ubyte i = 0; i < 6 && permutationPaths[i][0] != 0; i++)
 	{
 		writeDebugStreamLine("Route: %d",i);
 
 		// Special case measuring the distance from start to the first parking lot
-		if (current_location == 0)
+		if (currentLocation == 0)
 		{
-			total_dists[i] += dijkstra(paths[locations_paths[0]].destination, paths[permutations[i][0]].destination);
-			writeDebugStreamLine("%d %d",paths[locations_paths[0]].destination, paths[permutations[i][0]].destination);
+			totalDists[i] += dijkstra(paths[locationPaths[0]].destination, paths[permutationPaths[i][0]].destination);
+
+			writeDebugStreamLine("%d %d",paths[locationPaths[0]].destination, paths[permutationPaths[i][0]].destination);
 		}
 
 		ubyte x = 0;	// Needed to find the last parking lot
 
 		// Measures the distance between each of the parking lots
-		for (; x < 2 && permutations[i][x+1] != 0; x++)
+		for (; x < 2 && permutationPaths[i][x+1] != 0; x++)
 		{
-			total_dists[i] += dijkstra(paths[permutations[i][x]].destination, paths[permutations[i][x+1]].destination);
-			writeDebugStreamLine("%d %d",paths[permutations[i][x]].destination, paths[permutations[i][x+1]].destination);
+			totalDists[i] += dijkstra(paths[permutationPaths[i][x]].destination, paths[permutationPaths[i][x+1]].destination);
+
+			writeDebugStreamLine("%d %d",paths[permutationPaths[i][x]].destination, paths[permutationPaths[i][x+1]].destination);
 		}
 
 		// Special case measuring distance from last parking lot back home
-		total_dists[i] += dijkstra(paths[permutations[i][x]].destination, paths[locations_paths[4]].destination);
-		writeDebugStreamLine("%d %d",paths[permutations[i][x]].destination, paths[locations_paths[4]].destination);
+		totalDists[i] += dijkstra(paths[permutationPaths[i][x]].destination, paths[locationsPpaths[4]].destination);
+
+		writeDebugStreamLine("%d %d",paths[permutationPaths[i][x]].destination, paths[locationsPaths[4]].destination);
 	}
 
 	// Find shortest route out of total_dists
-	ubyte min_index = 0;		// Stores the route that is the shortest
-	ubyte min = MAX_UBYTE;	// Set the minimum to "infinity"
+	ubyte minIndex = 0;		// Stores the route that is the shortest
+	ubyte min = INFINITY;	// Set the minimum to "infinity"
 
-	for (ubyte i = 0; i < 6 && total_dists[i] != 0; i++)
+	for (ubyte i = 0; i < 6 && totalDists[i] != 0; i++)
 	{
-		if (total_dists[i] < min)
+		if (totalDists[i] < min)
 		{
-			min_index = i;
-			min = total_dists[i];
+			minIndex = i;
+			min = totalDists[i];
 		}
 	}
 
@@ -411,97 +417,97 @@ void shortest_path()
 
 	// Generate directions
 
-	ubyte tmp_directions[100][3];	// Tempoarily stores the combined directions
-	ubyte directions_index = 0;		// Keeps track of where we are storing at in tmp_directions
+	ubyte tmpDirections[100][3];	// Tempoarily stores the combined directions
+	ubyte directionsIndex = 0;		// Keeps track of where we are storing at in tmp_directions
 
 	// Initialize array
 	for (ubyte i = 0; i < 100; i++)
 	{
-		tmp_directions[i][0] = 0;
-		tmp_directions[i][1] = 0;
-		tmp_directions[i][2] = 0;
+		tmpDirections[i][0] = 0;
+		tmpDirections[i][1] = 0;
+		tmpDirections[i][2] = 0;
 	}
 
-	tmp_directions[0][0] = 'L';	// Leave start space
-	directions_index++;
+	tmpDirections[0][0] = 'L';	// Leave start space
+	directionsIndex++;
 
 	// If we are still at the start then add directions from start to the first parking lot
-	if (current_location == 0)
+	if (currentLocation == 0)
 	{
 		// Update global directions
-		dijkstra(paths[locations_paths[0]].destination, paths[permutations[min_index][0]].destination);
+		dijkstra(paths[locationPaths[0]].destination, paths[permutationPaths[minIndex][0]].destination);
 
 		// Loop through the global directions and add it to the local directions
 		for (ubyte i = 0; directions[i][0] != 0; i++)
 		{
-			tmp_directions[directions_index][0] = directions[i][0];
-			tmp_directions[directions_index][1] = directions[i][1];
+			tmpDirections[directionsIndex][0] = directions[i][0];
+			tmpDirections[directionsIndex][1] = directions[i][1];
 
 			// If it is the last direction to the parking lot, then note that we need to park
 			if (directions[i+1][0] == 0)
 			{
 				// Note the home and end locations
-				tmp_directions[directions_index][2] = permutations_l[min_index][0];
+				tmpDirections[directionsIndex][2] = permutationLocations[minIndex][0];
 			}
 
-			directions_index++;
+			directionsIndex++;
 		}
 	}
 
 	// For as many parking lots are left, calculate directions between them
 	ubyte x = 0;
 
-	for (; x < 2 && permutations[min_index][x+1] != 0; x++)
+	for (; x < 2 && permutationPaths[minIndex][x+1] != 0; x++)
 	{
-		dijkstra(paths[permutations[min_index][x]].destination, paths[permutations[min_index][x+1]].destination);
+		dijkstra(paths[permutationPaths[minIndex][x]].destination, paths[permutationPaths[minIndex][x+1]].destination);
 
 		// Loop through the global directions and add it to the local directions
 		for (ubyte i = 0; directions[i][0] != 0; i++)
 		{
-			tmp_directions[directions_index][0] = directions[i][0];
-			tmp_directions[directions_index][1] = directions[i][1];
+			tmpDirections[directionsIndex][0] = directions[i][0];
+			tmpDirections[directionsIndex][1] = directions[i][1];
 
 			// If it is the last direction to the parking lot, then note that we need to park
 			if (directions[i+1][0] == 0)
 			{
 				// Note the lot we are going to
-				tmp_directions[directions_index][2] = permutations_l[min_index][x+1];
+				tmpDirections[directionsIndex][2] = permutationLocations[minIndex][x+1];
 			}
 
-			directions_index++;
+			directionsIndex++;
 		}
 	}
 
 	// Update directions to be from the last parking lot back home
-	dijkstra(paths[permutations[min_index][x]].destination, paths[locations_paths[4]].destination);
+	dijkstra(paths[permutations[minIndex][x]].destination, paths[locationPaths[4]].destination);
 
 	// Loop through the global directions and add it to the local directions
 	for (ubyte i = 0; directions[i][0] != 0; i++)
 	{
-			tmp_directions[directions_index][0] = directions[i][0];
-			tmp_directions[directions_index][1] = directions[i][1];
+			tmpDirections[directionsIndex][0] = directions[i][0];
+			tmpDirections[directionsIndex][1] = directions[i][1];
 
 			// If it is the last direction to the parking lot, then note that we need to park
 			if (directions[i+1][0] == 0)
 			{
 				// Note the end locations
-				tmp_directions[directions_index][2] = locations[4];
+				tmpDirections[directionsIndex][2] = locations[4];
 			}
 
-			directions_index++;
+			directionsIndex++;
 	}
 
 	// Copy local complete directions to global array
 	for (ubyte i = 0; i < 100; i++)
 	{
-		directions[i][0] = tmp_directions[i][0];	// Turn Direction
-		directions[i][1] = tmp_directions[i][1];	// Path we are taking
-		directions[i][2] = tmp_directions[i][2];	// Lot we are going to if any
+		directions[i][0] = tmpDirections[i][0];	// Turn Direction
+		directions[i][1] = tmpDirections[i][1];	// Path we are taking
+		directions[i][2] = tmpDirections[i][2];	// Lot we are going to if any
 	}
 }
 
 // Mark a parking lot as having been visited
-void visited_objective(ubyte lot)
+void visitedObjective(ubyte lot)
 {
 	for (int i = 0; i<5; i++)
 	{
@@ -511,7 +517,7 @@ void visited_objective(ubyte lot)
 		}
 	}
 
-	current_location++;
+	currentLocation++;
 }
 
 //A function that turns the front motor
@@ -589,7 +595,7 @@ void drive(int degrees, int motorPower)
  	}
 }
 
-void right_of_way(char direction) {
+void rightOfWay(char direction) {
 
 	//How far the ultrasonic is looking for objects.
 	//Measurement is in centimeters
@@ -731,7 +737,7 @@ void right_of_way(char direction) {
 }
 
 
-void TurnLeft()
+void turnLeft()
 {
 	drive(450, 20);
 
@@ -748,7 +754,7 @@ void TurnLeft()
 }
 
 
-void TurnRight()
+void turnRight()
 {
 	drive(450, 20);
 
@@ -764,7 +770,7 @@ void TurnRight()
 	turn(0);
 }
 
-void GoStraight()
+void driveStraight()
 {
 	turn(0);
 	drive(450,20);
@@ -773,14 +779,14 @@ void GoStraight()
 task main()
 {
 	clearDebugStream();
-	graph_init();
+	createMap();
 
 	locations[0] = 1;
 	locations[1] = 3;
 	locations[2] = 4;
 	locations[3] = 2;
 	locations[4] = 1;
-	shortest_path();
+	shortestPath();
 
 	for (ubyte i = 0; directions[i][0] != 0; i++)
 	{
@@ -788,17 +794,17 @@ task main()
 
 		if (directions[i][0] == 'L')
 		{
-			TurnLeft();
+			turnLeft();
 		}
 
 		else if (directions[i][0] == 'R')
 		{
-			TurnRight();
+			turnRight();
 		}
 
 		else if (directions[i][0] == 'S')
 		{
-			GoStraight();
+			driveStraight();
 		}
 
 		followLine();
